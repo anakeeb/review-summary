@@ -1,154 +1,99 @@
 import React from 'react'
-import { useForm } from 'react-hook-form'
+import Scraper from './functions/Scraper'
+import ReviewCard from './components/reviewCard'
 
-function App() {
-    const onSubmit = (data) => {
-        console.log(data)
-        const rp = require('request-promise')
-        const $ = require('cheerio')
-        const proxyurl = 'https://cors-anywhere.herokuapp.com/'
-        const url = data.url
-        const urlWords = 'https://www.readabilityformulas.com/articles/dale-chall-readability-word-list.php'
-
-        const easyWordCounter = function(easyArr, wordArr) {
-            console.log(easyArr)
-            console.log(wordArr)
-            let easyWords = []
-            let easy = 0
-            for (let i = 0; i < wordArr.length; i++) {
-                for (let j = 0; j < wordArr[i].length; j++) {
-                    for (let k = 0; k < easyArr.length; k++) {
-                        for (let l = 0; l < easyArr[k].length; l++) {
-                            if (easyArr[k][l].toLowerCase() === wordArr[i][j].toLowerCase()) {
-                                easy++
-                            }
-                        }
-                    }
-                }
-                easyWords[i] = easy
-                easy = 0
-            }
-            return easyWords
+class App extends React.Component {
+    constructor() {
+        super()
+        this.state = {
+            loading: 0,
+            reviews: [],
+            daleChallScores: [],
+            ratings: []
         }
-
-        const daleChallScore = function(diffWords, words, sentences) {
-            console.log(diffWords)
-            console.log(words)
-            console.log(sentences)
-            return (0.1579 * ((diffWords / words) * 100)) + (0.0496 * (words / sentences))
-        }
-
-        const sentenceCounter = function(wordArr) {
-            for (let i = 0; i < wordArr.length; i++) {
-
-            }
-        }
-
-        rp(proxyurl + url)
-            .then(function(html){
-                //success!
-                let cheerioObject = $('div > div > div > div > div > div > div', html)
-                let reviews = []
-                for (let i = 0; i < cheerioObject.length; i++) {
-                    if (cheerioObject[i].attribs.class === 'text show-more__control') {
-                        console.log(cheerioObject[i].children.length)
-                        reviews.push(cheerioObject[i].children[0].data)
-                    } 
-                }
-                console.log(cheerioObject)
-                console.log(reviews)
-                console.log('reviews')
-                
-
-                return reviews
-                
-
-
-
-
-                
-            }).then(function(result){
-                let words
-                rp(proxyurl + urlWords)
-                  .then(function(html){
-                      //success!
-                      console.log('fff')
-                      let cheerioObject = $('tr > td', html)
-                      let words = []
-                      for (let i = 0;  i < cheerioObject.length; i++) {
-                          if ((cheerioObject[i].children.length === 1) && (cheerioObject[i].children[0].type === 'text')) {
-                              words.push(cheerioObject[i].children[0].data.split(' '))
-                          }
-                      }
-                      console.log(words)
-                      console.log(result)
-                      let reviewWords = []
-                      let reviewSentences = []
-                      for (let i = 0; i < result.length; i++) {
-                          console.log(result[i])
-                          reviewWords[i] = result[i].split(' ')
-                          reviewSentences[i] = result[i].split('.' || '!' || '?')
-
-                      }
-                      
-
-                      console.log(reviewWords)
-                      console.log(reviewSentences)
-                      let wordCounts = []
-                      let wordCount
-                      console.log('jj')
-                      for (let i = 0; i < reviewWords.length; i++) {
-                          wordCounts.push(reviewWords[i].length)
-                      }
-
-
-
-                      console.log(wordCounts)
-
-                      let easyWords = easyWordCounter(words, reviewWords)
-                      console.log(easyWords)
-
-                      let daleSum = 0
-                      for (let i = 0; i < reviewWords.length; i++) {
-                          let daleInstance = daleChallScore((reviewWords[i].length - easyWords[i]), reviewWords[i].length, reviewSentences[i].length)
-                          console.log('comment', i, 'has dale-Chall score of', daleInstance)
-                          daleSum += daleInstance
-                      }
-                      console.log('average dale chall score is', (daleSum / reviewWords.length))
-                      
-
-                  })
-                  .catch(function(err){
-                      //handle error
-                      console.log('err')
-                  })
-                })
-            .catch(function(err){
-                //handle error
-            });
+        this.setData = this.setData.bind(this)
+        this.setLoading = this.setLoading.bind(this)
     }
 
-    const { register, handleSubmit, errors } = useForm()
+    setData(reviews, daleChallScores, ratings) {
+        this.setState(prevState => {
+            return {
+                loading: prevState.loading,
+                reviews: reviews,
+                daleChallScores: daleChallScores,
+                ratings: ratings
+            }
+        })
+    }
 
-    return (
-        
+    setLoading(stage) {
+        this.setState(prevState => {
+            return {
+                loading: stage,
+                reviews: prevState.reviews,
+                daleChallScores: prevState.daleChallScores,
+                ratings: prevState.ratings
+            }
+        })
+    }
+
+
+
+    render() {
+        console.log(this.state)
+        let ratingAvg = 0
+        let ratingInstances = 0
+        let daleChallAvg = 0
+        let infoArr = []
+        for (let i = 0; i < this.state.reviews.length; i++) {
+            let arr = [this.state.reviews[i], this.state.daleChallScores[i], this.state.ratings[i]]
+            infoArr.push(arr)
+            daleChallAvg += this.state.daleChallScores[i]
+            if ((parseInt(this.state.ratings[i]) % 1) === 0) {
+                ratingAvg += parseInt(this.state.ratings[i])
+                ratingInstances += 1
+                console.log(ratingAvg, ratingInstances)
+            }
+            
+        }
+        daleChallAvg /= this.state.daleChallScores.length
+        ratingAvg /= ratingInstances
+        let readingLevel = ''
+        if (daleChallAvg > 9) {
+            readingLevel = 'college undergraduate'
+        }
+        else if (daleChallAvg > 8) {
+            readingLevel = 'high school junior'
+        }
+        else if (daleChallAvg > 7) {
+            readingLevel = 'high school freshman'
+        }
+        else if (daleChallAvg > 6) {
+            readingLevel = 'middle schooler'
+        }
+        else if (daleChallAvg > 5) {
+            readingLevel = '5th grader'
+        }
+        else {
+            readingLevel = '4th grade or below'
+        }
+        let message
+        if (this.state.loading === 1) {
+            message = <h1>loading</h1>
+        }
+        else if (this.state.loading === 2) {
+            message = <h1>top {this.state.ratings.length + 1} comments have average rating of { ratingAvg } with a reading comprehension level of { readingLevel }</h1>
+        }
+        const cardArray = infoArr.map(info => <ReviewCard review={ info[0] } daleChallScore={ info[1] } rating={ info[2] } /> )
+        return (
             <div>
-                <form onSubmit={ handleSubmit(onSubmit) }>
-                    <label>URL</label>
-                    <input name='url' ref={ 
-                        register({ 
-                            required: true,
-                            pattern: {
-                                value: /^(https?:\/\/www.|www.|)imdb.com\/title\/tt\d*\/reviews\?ref_=tt_ql_3*$/gm,
-                                
-                            }
-                        }) 
-                    }/>
-                    { errors.url && <p>please paste a valid url to imdb reviews page</p>}
-                    <input type='submit'/>
-                </form>
+                <Scraper setData={this.setData} setLoading={this.setLoading}/>
+                {message}
+                {cardArray}
             </div>
-    )
+            
+        )
+    }
   
 }
 
