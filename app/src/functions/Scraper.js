@@ -1,8 +1,8 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import styled from 'styled-components'
-import UnSnapped from '../img/unSnappedCamera.png'
-import Snapped from '../img/snappedCamera.png'
+import UnSnapped from '../img/UnSnapCamera.png'
+import Snapped from '../img/SnapCamera.png'
 
 
 const Scraper = props => {
@@ -154,19 +154,21 @@ const Scraper = props => {
         }
         .submit {
             background: url(${ UnSnapped });
-            
-            height: 100px;
-            width: 250 px;
+            background-position: center;
+            height: 300px;
+            width: 200 px;
+            padding: 160px 270px;
 
             &:hover{
-                background: url(${ Snapped })
+                background: url(${ Snapped });
+                background-position: center;
             }
         }
     `
 
     return (
         
-            <Styles>
+            <div>
                 <form onSubmit={ handleSubmit(onSubmit) }>
                     <label>URL</label>
                     <input name='url' ref={ 
@@ -181,7 +183,7 @@ const Scraper = props => {
                     { errors.url && <p>please paste a valid url to imdb reviews page</p>}
                     <input className='submit' type='submit'/>
                 </form>
-            </Styles>
+            </div>
     )
   
 }

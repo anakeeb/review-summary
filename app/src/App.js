@@ -1,6 +1,9 @@
 import React from 'react'
 import Scraper from './functions/Scraper'
 import ReviewCard from './components/reviewCard'
+import styled from 'styled-components'
+import UnSnapped from './img/UnSnapCamera.png'
+import Snapped from './img/SnapCamera.png'
 
 class App extends React.Component {
     constructor() {
@@ -85,12 +88,33 @@ class App extends React.Component {
             message = <h1>top {this.state.ratings.length + 1} comments have average rating of { ratingAvg } with a reading comprehension level of { readingLevel }</h1>
         }
         const cardArray = infoArr.map(info => <ReviewCard review={ info[0] } daleChallScore={ info[1] } rating={ info[2] } /> )
+        const Styles = styled.div`
+          .background {
+              background: url() no-repeat center fixed;
+              background-position: center;
+              background-size: cover;
+              background-attachment: scroll;
+              height: 3100px;
+              padding: 140px 100px;
+              color: #ffffff
+          }
+          .submit {
+              background: url(${ UnSnapped });
+              background-position: center;
+              padding: 60px 100px;
+
+              &:hover{
+                  background: url(${ Snapped });
+                  background-position: center;
+              }
+          }
+        `
         return (
-            <div>
+            <Styles>
                 <Scraper setData={this.setData} setLoading={this.setLoading}/>
                 {message}
                 {cardArray}
-            </div>
+            </Styles>
             
         )
     }
