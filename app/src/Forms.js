@@ -1,17 +1,39 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
+import styled from 'styled-components'
 
 function Forms() {
     const onSubmit = (data) => {
         console.log(data)
         
     }
+    const Styles = styled.div`
+        .background {
+            background: url(${ Portfolio }) no-repeat center fixed;
+            background-position: center;
+            background-size: cover;
+            background-attachment: scroll;
+            height: 3100px;
+            padding: 140px 100px;
+            color: #ffffff
+        }
+        .submit {
+        	
+			background-repeat: no-repeat;
+			background-position: <left|right>;
+			padding-<left|right>: <width of image>px;
+
+			&:hover{
+
+			}
+        }
+    `
 
     const { register, handleSubmit, errors } = useForm()
 
     return (
         
-            <div>
+            <Styles>
                 <form onSubmit={ handleSubmit(onSubmit) }>
                     <label>URL</label>
                     <input name='url' ref={ 
@@ -24,9 +46,9 @@ function Forms() {
                         }) 
                     }/>
                     { errors.url && <p>please paste a valid url to imdb reviews page</p>}
-                    <input type='submit'/>
+                    <input className='submit' type='submit'/>
                 </form>
-            </div>
+            </Styles>
     )
   
 }
