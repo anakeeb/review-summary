@@ -8,11 +8,9 @@ class reviewCard extends React.Component {
 	}
 
 	render() {
-		console.log(this.props)
 		let rating
 		switch(parseInt(this.props.rating)) {
             case 1:
-            	console.log('case 1')
                 rating = (
                     <div>
                         <img className='rating' src={Roll}/>
@@ -157,7 +155,6 @@ class reviewCard extends React.Component {
                 )
                 break;
             default:
-            	console.log('def')
                 rating = (
                     <div>
                         <img className='rating' src={Roll}/>

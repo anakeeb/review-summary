@@ -11,6 +11,7 @@ const Scraper = props => {
         const url = data.url
         const urlWords = 'https://www.readabilityformulas.com/articles/dale-chall-readability-word-list.php'
 
+
         const easyWordCounter = function(easyArr, wordArr) {
             let easyWords = []
             let easy = 0
@@ -39,6 +40,7 @@ const Scraper = props => {
             .then(function(html){
                 //success!
                 let cheerioObjectReview = $('div > div > div > div > div > div > div', html)
+                let cheerioObjectTitle = $('h3 > a', html)
                 let reviews = []
                 let ratings = []
                 let cheerioObjectRating = $('span > span', html)
@@ -52,7 +54,7 @@ const Scraper = props => {
                 }
                 
 
-                return [reviews, ratings]
+                return [reviews, ratings, cheerioObjectTitle[0].children[0].data]
                 
 
 
@@ -98,7 +100,7 @@ const Scraper = props => {
                           daleArray[i] = daleInstance
                           daleSum += daleInstance
                       }
-                      props.setData(result[0], daleArray, result[1])
+                      props.setData(result[0], daleArray, result[1], result[2])
                       props.setLoading(2)
 
                   })

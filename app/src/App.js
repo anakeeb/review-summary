@@ -15,19 +15,21 @@ class App extends React.Component {
             loading: 0,
             reviews: [],
             daleChallScores: [],
-            ratings: []
+            ratings: [],
+            title: ''
         }
         this.setData = this.setData.bind(this)
         this.setLoading = this.setLoading.bind(this)
     }
 
-    setData(reviews, daleChallScores, ratings) {
+    setData(reviews, daleChallScores, ratings, title) {
         this.setState(prevState => {
             return {
                 loading: prevState.loading,
                 reviews: reviews,
                 daleChallScores: daleChallScores,
-                ratings: ratings
+                ratings: ratings,
+                title: title
             }
         })
     }
@@ -38,7 +40,8 @@ class App extends React.Component {
                 loading: stage,
                 reviews: prevState.reviews,
                 daleChallScores: prevState.daleChallScores,
-                ratings: prevState.ratings
+                ratings: prevState.ratings,
+                title: prevState.title
             }
         })
     }
@@ -46,7 +49,6 @@ class App extends React.Component {
 
 
     render() {
-        console.log(this.state)
         let ratingAvg = 0
         let ratingInstances = 0
         let daleChallAvg = 0
@@ -254,6 +256,7 @@ class App extends React.Component {
         }
         else if (this.state.loading === 2) {
             message = <div>
+                <h1> Title: {this.state.title}</h1>
                 <h1>Number of Top Comments: {this.state.ratings.length + 1}</h1>
                 <div>
                     <h1>Average Rating: { rating }</h1> 
@@ -336,12 +339,12 @@ class App extends React.Component {
               <div className='message'>
                   {message}
               </div>
-              <Scraper setData={this.setData} setLoading={this.setLoading}/>
+              <Scraper setData={this.setData} setLoading={this.setLoading} setTitle={this.setTitle}/>
               <br/>
               <br/>
               <br/>
               {cardArray}
-              <h1>But How Does All of This Work?</h1>
+              <h1 className='centered'>But How Does All of This Work?</h1>
               <p>Using webscraping and the Dale-Challs formula for reading comprehension (which says that the greater the ratio of difficult words to easy words, and the more words per sentence, the more challenging a paragraph is to read) you can analyze the reading level required to understand the top reviews on popular movie</p>
             </div> 
             </Styles>
